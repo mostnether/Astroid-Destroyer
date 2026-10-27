@@ -5,7 +5,8 @@ pygame.init()
 
 WINDOW_WIDTH = 1080
 WINDOW_HEIGHT  = 720
-PLAYER_DIRECTION = 1
+PLAYER_DIRECTION = pygame.math.Vector2(1,-1)
+PLAYER_SPEED = 200
 display_surface = pygame.display.set_mode((WINDOW_WIDTH ,WINDOW_HEIGHT ))
 pygame.display.set_caption("Astroid Destroyer")
 sprite_sheet = pygame.image.load("resources/assets-bck.png")
@@ -18,17 +19,21 @@ astroid_surf = sprite_sheet.subsurface(13,274,200,200).convert_alpha()
 astroid_rect = astroid_surf.get_frect(center = (WINDOW_WIDTH/2,WINDOW_HEIGHT/2))
 #star_example = star_sheet.subsurface(886, 3, 223, 220)
 player_surf = sprite_sheet.subsurface(15,10,135,134).convert_alpha()
-player_rect = player_surf.get_frect(center = (WINDOW_WIDTH/2,WINDOW_HEIGHT/2))
+player_rect = player_surf.get_frect(center = (WINDOW_WIDTH/2+50,WINDOW_HEIGHT/2+80))
 
                          
 star_positions = [(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT)) for i in range(20)]
 # expression for value in iterable if condition
 running = True
+clock = pygame.time.Clock()
 #surf = pygame.Surface((100,200))
 #surf.fill("azure")
 
 x = 100
 while running:
+    dt = clock.tick(30)/1000
+    print(dt)
+    print(clock.get_fps())
     #event loop
     for event in pygame.event.get():
         if event.type == 256:
@@ -45,10 +50,13 @@ while running:
     display_surface.blit(laser_surf, laser_rect)
 
     #player movement
-    player_rect.x += PLAYER_DIRECTION * 0.8
+    player_rect.center += PLAYER_DIRECTION * PLAYER_SPEED * dt
+    
 
-    if player_rect.right > WINDOW_WIDTH or player_rect.left < 0:
-        PLAYER_DIRECTION *= -1
+    if player_rect.right > WINDOW_WIDTH or player_rect.left < 0 :
+        PLAYER_DIRECTION.x *= -1
+    if player_rect.top <0 or player_rect.bottom > WINDOW_HEIGHT:
+        PLAYER_DIRECTION.y *= -1
 
     
     
